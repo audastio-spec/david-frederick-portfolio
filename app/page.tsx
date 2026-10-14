@@ -1,16 +1,272 @@
 'use client';
-import {useState,useEffect} from 'react';
-import {ArrowUpRight,ArrowLeft, Compass, Code2, Plane, ChevronRight} from 'lucide-react';
+
+import { useEffect, useState, type MouseEvent } from 'react';
+import { ArrowLeft, ArrowUpRight, ChevronRight, Code2, Compass, Plane } from 'lucide-react';
+
 const basePath = '/david-frederick-portfolio';
 const asset = (path: string) => `${basePath}${path}`;
+
 const projects = {
- ouvri:{name:'Ouvri',eyebrow:'COMMUNITY · MOBILE PRODUCT',line:'A familiar face. In a new city.',description:'An alumni community built around local connection, shared experience, and the next career opportunity.',image:'/projects/ouvri/community.jpeg',repo:'kinvo',tags:['React Native','Expo','Bun','Hono','Prisma'],intro:'Ouvri brings alumni together through Town, People, and Jobs. The product turns a dispersed network into a place to find familiar faces, start conversations, and explore opportunities.',challenge:'Connection should feel personal. An alumni network needs both an approachable experience and a way to establish trust before community access.',solution:'The founding beta uses account verification and member vouching to unlock community features. The supplied product graphics show a unified feed, messaging, short video, local communities, and an AI-assisted job application experience.',images:['community.jpeg','feed.jpeg','jobs.jpeg'],architecture:[['Mobile experience','React Native + Expo','Community navigation and mobile interactions.'],['Application services','Bun + Hono','API layer supporting the mobile product.'],['Data access','Prisma','Structured access to application records.']],note:'Public product name: Ouvri.'},
- roots:{name:'Roots of Glory',eyebrow:'FOOTBALL · CULTURE · IDENTITY',line:'The game is only the beginning.',description:'A football companion connecting match discovery with the culture, stories, and identity around the game.',image:'/projects/roots/01-hero.jpg',repo:'Roots-of-Glory',tags:['React Native','TypeScript','PostgreSQL','Better Auth','Mux'],intro:'Roots of Glory brings football discovery and cultural storytelling into one mobile experience. Team personalization, calendars, and editorial content give supporters different ways to follow the game.',challenge:'Football information and the stories surrounding it often live in separate places. The experience needs to support both quick fixture discovery and more considered reading.',solution:'The current native application combines personalized navigation, competition filters, a month calendar, culture feeds, and article details with save and share actions.',images:['02-home.png','03-football-calendar.png','04-culture.png'],architecture:[['Native clients','React Native 0.81.5 + React 19.1','TypeScript application with native iOS and Android projects.'],['API and identity','Bun + Hono + Better Auth','The website is the shared account authority; native sign-in does not create a second Supabase account.'],['Persistence and video','Prisma + PostgreSQL + Mux','Relational application data and video infrastructure.']],note:'Current native implementation does not use Expo. An earlier mobile iteration used Expo 54. The supplied October 6 capture records version 1.1.0, build 65, waiting for review; it does not establish current release status.'}
-};
-type Key=keyof typeof projects;
-export default function Home(){const [active,setActive]=useState('about');const [detail,setDetail]=useState<Key|null>(null);
-useEffect(()=>{const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)setActive(e.target.id)}),{rootMargin:'-15% 0px -65% 0px'});document.querySelectorAll('main section[id]').forEach(e=>observer.observe(e));return()=>observer.disconnect()},[]);
-useEffect(()=>{const read=()=>{const key=new URLSearchParams(location.search).get('project');setDetail(key==='ouvri'||key==='roots'?key:null)};read();window.addEventListener('popstate',read);return()=>window.removeEventListener('popstate',read)},[]);
-function open(key:Key|null){setDetail(key);history.pushState({},'',key?`${basePath}/?project=${key}`:`${basePath}/`);window.scrollTo({top:0,behavior:'instant'})}
-return <><a href="#content" className="skip">Skip to content</a><div className="shell"><header className="sidebar"><a href={`${basePath}/`} className="wordmark">DF<span> / PORTFOLIO</span></a><div className="identity"><p className="eyebrow mint">SOFTWARE · PEOPLE · POSSIBILITY</p><h1>David<br/>Frederick<span className="mint">.</span></h1><h2>Product builder.<br/>Aviation-minded leader.</h2><p className="intro">I turn ideas into useful software with AI, human judgment, and the discipline to deliver.</p></div><nav aria-label="Main navigation">{[['about','About'],['projects','Selected work'],['approach','AI development'],['experience','Experience'],['contact','Contact']].map(([id,label],i)=><a className={active===id&&!detail?'active':''} href={`${basePath}/#${id}`} key={id} onClick={()=>setDetail(null)}><span className="nav-line"/><small>0{i+1}</small>{label}</a>)}</nav><div className="sidebar-bottom"><a href="https://github.com/audastio-spec" target="_blank" rel="noreferrer" aria-label="David's GitHub"><Code2 size={20}/></a><p>Based in Central Florida<br/><span>Building with a global perspective.</span></p></div></header><main id="content">{detail?<CaseStudy id={detail} back={()=>open(null)}/>:<><section id="about" className="about"><div className="section-label"><span>01 / ABOUT</span><span className="status"><i/> Ideas into applications</span></div><h2>Technology with<br/>a <em>human purpose.</em></h2><p>I’m David, a product builder and professional leader whose work connects people, technology, and opportunity.</p><p>Through <strong>Ouvri</strong> and <strong>Roots of Glory</strong>, I explore how software can strengthen communities and bring shared passions to life. I use <strong>Claude and Codex</strong> to develop applications, pairing AI-assisted implementation with product direction and thoughtful review.</p><p>My background spans American Airlines, nonprofit partner engagement, and project management. An <strong>MBA in Aviation Management</strong> and <strong>PMP certification</strong> inform how I approach complex work: understand the people, clarify the goal, and deliver with intention.</p><div className="credentials"><span>MBA · Aviation Management</span><span>PMP Certified</span><span>Former American Airlines</span></div></section><section id="projects"><div className="section-label">02 / SELECTED WORK <span>IDEA → PRODUCT</span></div><h2>Built around<br/><em>real connection.</em></h2><div className="projects">{(Object.entries(projects) as [Key,typeof projects.ouvri][]).map(([key,p],i)=><article className="project" key={key}><button className={'project-image '+key} onClick={()=>open(key)} aria-label={`Explore ${p.name} case study`}><img src={asset(p.image)} alt={`${p.name} original promotional graphic`}/><span className="image-link"><ArrowUpRight size={20}/></span></button><div className="project-heading"><div><p className="eyebrow">0{i+1} / {p.eyebrow}</p><h3><button onClick={()=>open(key)}>{p.name}<ArrowUpRight size={22}/></button></h3></div><span className="project-type">MOBILE APP</span></div><p>{p.description}</p><div className="tags">{p.tags.map(t=><span key={t}>{t}</span>)}</div><button className="text-link" onClick={()=>open(key)}>Explore the case study <ChevronRight size={16}/></button></article>)}</div></section><section id="approach"><div className="section-label">03 / AI DEVELOPMENT <Code2 size={18}/></div><h2>AI accelerates the build.<br/><em>Judgment sets the direction.</em></h2><p>I work with Claude and Codex to translate product ideas into working software. My role is to define the experience, give the tools clear context, assess the output, and keep the work tied to the original goal.</p><div className="tools"><span>Claude</span><span>Codex</span><span>Human-led decisions</span></div><div className="process">{[['01','Frame the problem','Define the audience, core journey, and boundaries before implementation.'],['02','Build with context','Use specifications, existing code, and visual references to guide AI-assisted development.'],['03','Review and refine','Inspect behavior, resolve integration issues, and iterate on the experience.'],['04','Prepare to deliver','Bring implementation, documentation, and mobile build workflows together.']].map(([n,t,d])=><div key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div></div>)}</div><aside className="insight"><Compass size={22}/><p>My focus is the full journey from an idea to an application people can use.</p></aside></section><section id="experience"><div className="section-label">04 / EXPERIENCE <Plane size={18}/></div><h2>A builder’s curiosity.<br/><em>A leader’s discipline.</em></h2><div className="experience"><article><span>PARTNERSHIPS & ENGAGEMENT</span><div><h3>Year Up United</h3><h4>Associate Director, Donor & Corporate Partner Engagement</h4><p>Connecting corporate partners, donors, and volunteer experiences with a mission centered on opportunity. Bringing stakeholder alignment and coordinated delivery to cross-functional work.</p></div></article><article><span>AVIATION & SERVICE</span><div><h3>American Airlines</h3><h4>Former Flight Attendant</h4><p>Firsthand experience in passenger service, safety-conscious operations, and working with diverse teams. A foundation for my interest in aviation leadership and passenger experience.</p></div></article><article><span>EDUCATION & QUALIFICATIONS</span><div><h3>MBA in Aviation Management</h3><h4>Lynn University</h4><p>Business strategy through the lens of aviation. Complemented by PMP certification and a structured approach to project delivery.</p><div className="tags"><span>MBA</span><span>PMP</span><span>CCMP</span></div></div></article></div></section><section id="contact"><div className="section-label">05 / WHAT’S NEXT</div><h2>Let’s build<br/><em>something meaningful.</em></h2><p>I’m interested in conversations at the intersection of software, community, project delivery, and aviation leadership.</p><a className="contact-button" href="https://github.com/audastio-spec" target="_blank" rel="noreferrer">Connect on GitHub <ArrowUpRight size={19}/></a><p className="contact-note">Explore my repositories and connect through my GitHub profile.</p></section><footer><span>© {new Date().getFullYear()} David Frederick</span><span>Built with React & Tailwind CSS</span><a href="#about">Back to top ↑</a></footer></>}</main></div></>}
-function CaseStudy({id,back}:{id:Key,back:()=>void}){const p=projects[id];return <article className="case-study"><button className="text-link" onClick={back}><ArrowLeft size={16}/> Back to portfolio</button><p className="eyebrow mint case-eyebrow">PROJECT CASE STUDY / {p.eyebrow}</p><h2>{p.name}<span className="mint">.</span></h2><p className="case-line">{p.line}</p><img className="case-hero" src={p.image} alt={`${p.name} branded product overview`}/><div className="tags">{p.tags.map(t=><span key={t}>{t}</span>)}</div><div className="case-section"><h3>The product</h3><p>{p.intro}</p></div><div className="case-section"><h3>The challenge</h3><p>{p.challenge}</p></div><div className="case-section"><h3>The experience</h3><p>{p.solution}</p></div><div className={'gallery '+id}>{p.images.map((im,i)=><a href={asset(`/projects/${id}/${im}`)} target="_blank" rel="noreferrer" key={im}><img src={asset(`/projects/${id}/${im}`)} alt={`${p.name}: ${id==='roots'?['personalized home','football calendar','culture feed'][i]:['community discovery','unified feed','job application experience'][i]}`} loading="lazy"/><span>{['Discover','Connect','Explore'][i]} <ArrowUpRight size={14}/></span></a>)}</div><div className="case-section"><p className="eyebrow mint">UNDER THE HOOD</p><h3>Technical architecture</h3><div className="architecture">{p.architecture.map(([t,s,d],i)=><div key={t}><span className="layer">0{i+1}</span><div><h4>{t}</h4><strong>{s}</strong><p>{d}</p></div></div>)}</div></div><div className="case-section"><h3>AI-assisted development</h3><p>Claude and Codex support my application development process. I lead the product direction, provide requirements and context, and review implementation as the software evolves.</p>{id==='roots'&&<><img className="dev-image" src={asset("/projects/roots/07-development.png")} alt="Roots of Glory TypeScript discovery source open in Xcode"/><p className="caption">Supplied development capture: TypeScript discovery logic in Xcode, including broadcast grouping, kickoff filtering, response validation, and cancellation.</p></>}</div><p className="source-note">{p.note}</p><div className="case-end"><button className="text-link" onClick={back}><ArrowLeft size={16}/> Return to selected work</button></div></article>}
+  ouvri: {
+    name: 'Ouvri',
+    eyebrow: 'COMMUNITY · MOBILE PRODUCT',
+    line: 'A familiar face. In a new city.',
+    description: 'An alumni community built around local connection, shared experience, and the next career opportunity.',
+    image: '/projects/ouvri/community.jpeg',
+    tags: ['React Native', 'Expo', 'Bun', 'Hono', 'Prisma'],
+    problem: 'How can alumni maintain meaningful professional connections after completing a program?',
+    vision: 'Create a community where alumni can find familiar faces, communicate, discover opportunities, and build lasting professional relationships.',
+    approach: 'I translated that purpose into product journeys for member discovery, onboarding, verification, conversations, and career opportunities. The work connects community needs to feature priorities and mobile flows.',
+    decisions: [
+      ['Trust before access', 'Member verification and vouching help establish a credible community before people enter shared spaces.'],
+      ['Connection before volume', 'Discovery and direct conversations give members a clearer path to a useful relationship than a feed alone.'],
+      ['Opportunity in context', 'Jobs belong alongside people and local communities so career exploration is connected to the network.'],
+    ],
+    experience: 'The founding beta includes account verification and member vouching. The supplied promotional graphics illustrate a feed, messaging, short video, local communities, and an AI-assisted job application experience; the graphics are design illustrations, not proof that every feature is live.',
+    images: ['community.jpeg', 'feed.jpeg', 'jobs.jpeg'],
+    imageLabels: ['community discovery', 'unified feed illustration', 'job application illustration'],
+    architecture: [
+      ['Mobile experience', 'React Native + Expo', 'Community navigation and mobile interactions.'],
+      ['Application services', 'Bun + Hono', 'API layer supporting the mobile product.'],
+      ['Data access', 'Prisma', 'Structured access to application records.'],
+    ],
+    delivery: 'Development work has included mobile product journeys, onboarding, Android beta testing, and technical iteration.',
+    note: 'Ouvri is an independent alumni community product. Its public product name is Ouvri.',
+  },
+  roots: {
+    name: 'Roots of Glory',
+    eyebrow: 'FOOTBALL · CULTURE · IDENTITY',
+    line: 'The game is only the beginning.',
+    description: 'A football companion connecting match discovery with the culture, stories, and identity around the game.',
+    image: '/projects/roots/01-hero.jpg',
+    tags: ['React Native', 'TypeScript', 'PostgreSQL', 'Better Auth', 'Mux'],
+    problem: 'Football information and the stories surrounding it often live in separate places.',
+    vision: 'Bring match discovery and cultural storytelling into one mobile experience that supporters can personalize.',
+    approach: 'I organized the experience around team preferences, competition filters, a month calendar, culture feeds, and article details, then worked through API integration, mobile behavior, and release testing.',
+    decisions: [
+      ['Personalize the entry point', 'Team preferences help supporters reach the fixtures and stories that matter to them.'],
+      ['Make discovery quick', 'Calendar and competition filters support fast answers without replacing deeper reading.'],
+      ['Keep culture visible', 'Editorial content sits beside match information so the product reflects the people and identities around football.'],
+    ],
+    experience: 'The native application combines personalized navigation, competition filters, a month calendar, culture feeds, and article details with save and share actions.',
+    images: ['02-home.png', '03-football-calendar.png', '04-culture.png'],
+    imageLabels: ['personalized home', 'football calendar', 'culture feed'],
+    architecture: [
+      ['Native clients', 'React Native 0.81.5 + React 19.1', 'TypeScript application with native iOS and Android projects.'],
+      ['API and identity', 'Bun + Hono + Better Auth', 'The website is the shared account authority; native sign-in does not create a second Supabase account.'],
+      ['Persistence and video', 'Prisma + PostgreSQL + Mux', 'Relational application data and video infrastructure.'],
+    ],
+    delivery: 'A development capture dated October 6, 2026 shows version 1.1.0, build 65, awaiting Apple review. The capture does not establish current public availability.',
+    note: 'Current native implementation does not use Expo. An earlier mobile iteration used Expo 54.',
+  },
+} as const;
+
+type ProjectKey = keyof typeof projects;
+
+const navigation = [
+  ['home', 'Home'],
+  ['projects', 'Featured products'],
+  ['product', 'Product management'],
+  ['ai', 'AI development'],
+  ['leadership', 'Business & aviation'],
+  ['about', 'About'],
+  ['contact', 'Contact'],
+] as const;
+
+const capabilities = [
+  ['01', 'Product discovery', 'Ouvri began with the question of how alumni can maintain useful connections after a program ends. That need shaped member discovery and community access.'],
+  ['02', 'Product strategy', 'For Ouvri, verification and first connections take priority because trust and relevance are prerequisites for a useful network.'],
+  ['03', 'User experience', 'Ouvri groups people, conversations, and jobs into related journeys. Roots of Glory pairs quick fixture discovery with longer cultural stories.'],
+  ['04', 'Technical delivery', 'I work across React Native, TypeScript, APIs, and data services, using Claude and Codex to support implementation and debugging.'],
+  ['05', 'Iteration and improvement', 'I review mobile behavior, test workflows, resolve integration issues, and use release milestones to guide the next iteration.'],
+] as const;
+
+export default function Home() {
+  const [active, setActive] = useState('home');
+  const [detail, setDetail] = useState<ProjectKey | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id === 'impact' ? 'leadership' : entry.target.id); }),
+      { rootMargin: '-15% 0px -65% 0px' },
+    );
+    document.querySelectorAll('main section[id]').forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, [detail]);
+
+  useEffect(() => {
+    const read = () => {
+      const key = new URLSearchParams(location.search).get('project');
+      setDetail(key === 'ouvri' || key === 'roots' ? key : null);
+    };
+    read();
+    window.addEventListener('popstate', read);
+    return () => window.removeEventListener('popstate', read);
+  }, []);
+
+  function open(key: ProjectKey | null) {
+    setDetail(key);
+    history.pushState({}, '', key ? `${basePath}/?project=${key}` : `${basePath}/#projects`);
+    if (key) window.scrollTo({ top: 0, behavior: 'instant' });
+    else requestAnimationFrame(() => document.getElementById('projects')?.scrollIntoView());
+  }
+
+  function navigateFromCaseStudy(event: MouseEvent<HTMLAnchorElement>, id: string) {
+    if (!detail) return;
+    event.preventDefault();
+    setDetail(null);
+    history.pushState({}, '', `${basePath}/#${id}`);
+    requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
+  }
+
+  return (
+    <>
+      <a href="#content" className="skip">Skip to content</a>
+      <div className="shell">
+        <header className="sidebar">
+          <a href={`${basePath}/`} className="wordmark">DF<span> / PORTFOLIO</span></a>
+          <div className="identity">
+            <p className="eyebrow mint">PRODUCT · PEOPLE · POSSIBILITY</p>
+            <h1>David<br />Frederick<span className="mint">.</span></h1>
+            <h2>Digital product builder.<br />Aviation-minded leader.</h2>
+            <p className="intro">I connect customer needs, business goals, and hands-on technology delivery.</p>
+          </div>
+          <nav aria-label="Main navigation">
+            {navigation.map(([id, label], index) => (
+              <a className={active === id && !detail ? 'active' : ''} href={`${basePath}/#${id}`} key={id} onClick={event => navigateFromCaseStudy(event, id)}>
+                <span className="nav-line" /><small>0{index + 1}</small>{label}
+              </a>
+            ))}
+          </nav>
+          <div className="sidebar-bottom">
+            <a href="https://github.com/audastio-spec" target="_blank" rel="noreferrer" aria-label="David's GitHub"><Code2 size={20} /></a>
+            <p>Based in Central Florida<br /><span>Building with a global perspective.</span></p>
+          </div>
+        </header>
+
+        <main id="content">
+          {detail ? <CaseStudy id={detail} back={() => open(null)} /> : (
+            <>
+              <section id="home" className="about hero-section">
+                <div className="section-label"><span>01 / HOME</span><span className="status"><i /> Product vision to delivery</span></div>
+                <h2 className="hero-heading">Building digital products that connect <em>people, businesses, and technology.</em></h2>
+                <p>I’m a digital product builder and PMP-certified leader with an MBA in Aviation Management, American Airlines experience from 2018–2022, and a background leading corporate engagement initiatives. I combine business strategy, customer experience, and hands-on AI-assisted development to create useful digital solutions.</p>
+                <div className="credentials"><span>Product strategy</span><span>B2B engagement</span><span>AI development</span><span>Aviation technology</span></div>
+                <a className="text-link impact-link" href={`${basePath}/#impact`}>Product &amp; business impact <ChevronRight size={16} /></a>
+              </section>
+
+              <section id="projects">
+                <div className="section-label">02 / FEATURED PRODUCTS <span>IDEA → PRODUCT</span></div>
+                <h2>Built around<br /><em>real connection.</em></h2>
+                <div className="projects">
+                  {(Object.entries(projects) as [ProjectKey, typeof projects[ProjectKey]][]).map(([key, project], index) => (
+                    <article className="project" key={key}>
+                      <button className={`project-image ${key}`} onClick={() => open(key)} aria-label={`Explore ${project.name} case study`}>
+                        <img src={asset(project.image)} alt={`${project.name} original promotional graphic`} />
+                        <span className="image-link"><ArrowUpRight size={20} /></span>
+                      </button>
+                      <div className="project-heading"><div><p className="eyebrow">0{index + 1} / {project.eyebrow}</p><h3><button onClick={() => open(key)}>{project.name}<ArrowUpRight size={22} /></button></h3></div><span className="project-type">MOBILE APP</span></div>
+                      <p>{project.description}</p>
+                      <div className="tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+                      <button className="text-link" onClick={() => open(key)}>Explore the case study <ChevronRight size={16} /></button>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section id="product">
+                <div className="section-label">03 / PRODUCT MANAGEMENT <Compass size={18} /></div>
+                <h2>From product vision<br /><em>to delivery.</em></h2>
+                <p>My product work starts with a human need, then moves through feature choices, experience design, implementation, and testing. These examples show how I connect the decisions to the build.</p>
+                <div className="process capability-list">
+                  {capabilities.map(([number, title, description]) => <div key={number}><span>{number}</span><div><h3>{title}</h3><p>{description}</p></div></div>)}
+                </div>
+              </section>
+
+              <section id="ai">
+                <div className="section-label">04 / AI &amp; TECHNICAL DEVELOPMENT <Code2 size={18} /></div>
+                <h2>AI accelerates the build.<br /><em>Judgment sets the direction.</em></h2>
+                <p>I define the problem and requirements, design the journey, use Claude and Codex to support implementation, then test, deploy, and iterate. I review generated work against the product goal and the behavior of the application.</p>
+                <div className="workflow" aria-label="Development process">
+                  {['Problem', 'Requirements', 'Design', 'AI-assisted development', 'Testing', 'Deployment', 'Iteration'].map((step, index) => <span key={step}>{step}{index < 6 && <b aria-hidden="true">→</b>}</span>)}
+                </div>
+                <p>In Roots of Glory, that work spans a TypeScript and React Native client, API integration, account flows, backend services, mobile QA, and release preparation.</p>
+                <aside className="insight"><Compass size={22} /><p><strong>Potential business applications:</strong> The same approach could support customer segmentation, personalized outreach, lead qualification, and digital engagement. These are directions I could explore, not systems I claim to have deployed.</p></aside>
+              </section>
+
+              <section id="leadership">
+                <div className="section-label">05 / BUSINESS &amp; AVIATION LEADERSHIP <Plane size={18} /></div>
+                <h2>Understanding business customers.<br /><em>Building for real operations.</em></h2>
+                <div className="experience">
+                  <article><span>CORPORATE ENGAGEMENT</span><div><h3>Year Up United</h3><h4>Associate Director, Donor &amp; Corporate Partner Engagement</h4><p>I lead corporate and volunteer engagement work across distributed markets. The role calls for understanding partner needs, coordinating internal teams, simplifying complex journeys, and reporting progress against commitments.</p></div></article>
+                  <article><span>AVIATION OPERATIONS</span><div><h3>American Airlines</h3><h4>Flight Attendant · 2018–2022</h4><p>Direct experience with passenger service, safety-conscious operations, and coordination across airline teams informs how I think about frontline technology and customer experience.</p></div></article>
+                </div>
+                <div className="case-section aviation-connection">
+                  <p className="eyebrow mint">AVIATION EXPERIENCE MEETS DIGITAL INNOVATION</p>
+                  <h3>Bringing the pieces together</h3>
+                  <p>My aviation background, corporate relationship work, and mobile product development inform a practical goal: build digital experiences that improve customer engagement and strengthen business relationships in aviation.</p>
+                </div>
+              </section>
+
+              <section id="impact">
+                <div className="section-label">PRODUCT OUTCOMES &amp; DELIVERY <span>DOCUMENTED SCOPE</span></div>
+                <h2>Delivery with<br /><em>evidence behind it.</em></h2>
+                <div className="impact-grid">
+                  <div><strong>2</strong><span>featured mobile products: Ouvri and Roots of Glory</span></div>
+                  <div><strong>35+</strong><span>concurrent initiatives managed at Year Up United</span></div>
+                  <div><strong>11</strong><span>U.S. markets supported through corporate engagement work</span></div>
+                  <div><strong>$1M+</strong><span>program portfolio with planning and performance reporting responsibility</span></div>
+                </div>
+                <p className="source-note">An October 6, 2026 development capture documents a Roots of Glory Apple review submission. This dated milestone does not establish current public availability.</p>
+              </section>
+
+              <section id="about">
+                <div className="section-label">06 / ABOUT <span>PRODUCT · BUSINESS · AVIATION</span></div>
+                <h2>A builder’s curiosity.<br /><em>A leader’s discipline.</em></h2>
+                <p>My work connects people, technology, and opportunity. Through Ouvri and Roots of Glory, I explore how useful software can strengthen communities and shared passions. In my professional roles, I lead cross-functional work that requires clear priorities, stakeholder alignment, and measured delivery.</p>
+                <p>An MBA in Aviation Management and PMP certification inform how I approach complex work. I bring product direction, hands-on technical judgment, and experience in customer-facing aviation operations to each project.</p>
+                <div className="credentials"><span>MBA · Aviation Management</span><span>PMP Certified</span><span>Year Up United</span><span>Former American Airlines</span></div>
+              </section>
+
+              <section id="contact">
+                <div className="section-label">07 / CONTACT</div>
+                <h2>Let’s build<br /><em>something meaningful.</em></h2>
+                <p>I’m interested in product ownership, technical product management, AI-assisted development, and aviation technology opportunities.</p>
+                <a className="contact-button" href="https://github.com/audastio-spec" target="_blank" rel="noreferrer">Connect on GitHub <ArrowUpRight size={19} /></a>
+                <p className="contact-note">Explore my public work and connect through my GitHub profile.</p>
+              </section>
+              <footer><span>© {new Date().getFullYear()} David Frederick</span><span>Built with React &amp; Tailwind CSS</span><a href={`${basePath}/#home`}>Back to top ↑</a></footer>
+            </>
+          )}
+        </main>
+      </div>
+    </>
+  );
+}
+
+function CaseStudy({ id, back }: { id: ProjectKey; back: () => void }) {
+  const project = projects[id];
+  return (
+    <article className="case-study">
+      <button className="text-link" onClick={back}><ArrowLeft size={16} /> Back to portfolio</button>
+      <p className="eyebrow mint case-eyebrow">PROJECT CASE STUDY / {project.eyebrow}</p>
+      <h2>{project.name}<span className="mint">.</span></h2>
+      <p className="case-line">{project.line}</p>
+      <img className="case-hero" src={asset(project.image)} alt={`${project.name} branded product overview`} />
+      <div className="tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+      <div className="case-section"><h3>The problem</h3><p>{project.problem}</p></div>
+      <div className="case-section"><h3>The product vision</h3><p>{project.vision}</p></div>
+      <div className="case-section"><h3>My approach</h3><p>{project.approach}</p></div>
+      <div className="case-section"><h3>Product decisions</h3><div className="decision-list">{project.decisions.map(([title, reason]) => <div key={title}><h4>{title}</h4><p>{reason}</p></div>)}</div></div>
+      <div className="case-section"><h3>The experience</h3><p>{project.experience}</p></div>
+      <div className={`gallery ${id}`}>
+        {project.images.map((image, index) => <a href={asset(`/projects/${id}/${image}`)} target="_blank" rel="noreferrer" key={image}><img src={asset(`/projects/${id}/${image}`)} alt={`${project.name}: ${project.imageLabels[index]}`} loading="lazy" /><span>{['Discover', 'Connect', 'Explore'][index]} <ArrowUpRight size={14} /></span></a>)}
+      </div>
+      <div className="case-section"><p className="eyebrow mint">UNDER THE HOOD</p><h3>Technical architecture</h3><div className="architecture">{project.architecture.map(([title, stack, description], index) => <div key={title}><span className="layer">0{index + 1}</span><div><h4>{title}</h4><strong>{stack}</strong><p>{description}</p></div></div>)}</div></div>
+      <div className="case-section"><h3>AI-assisted development</h3><p>Claude and Codex support my application development process. I lead product direction, provide requirements and context, and review implementation as the software evolves.</p>{id === 'roots' && <><img className="dev-image" src={asset('/projects/roots/07-development.png')} alt="Roots of Glory TypeScript discovery source open in Xcode" /><p className="caption">Supplied development capture: TypeScript discovery logic in Xcode, including broadcast grouping, kickoff filtering, response validation, and cancellation.</p></>}</div>
+      <div className="case-section"><h3>Delivery evidence</h3><p>{project.delivery}</p></div>
+      <p className="source-note">{project.note}</p>
+      <div className="case-end"><button className="text-link" onClick={back}><ArrowLeft size={16} /> Return to selected work</button></div>
+    </article>
+  );
+}
