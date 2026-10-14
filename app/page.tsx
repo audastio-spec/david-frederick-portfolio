@@ -232,8 +232,8 @@ export default function Home() {
                 <div className="section-label">07 / CONTACT</div>
                 <h2>Let’s build<br /><em>something meaningful.</em></h2>
                 <p>I’m interested in product ownership, technical product management, AI-assisted development, and aviation technology opportunities.</p>
-                <a className="contact-button" href="https://github.com/audastio-spec" target="_blank" rel="noreferrer">Connect on GitHub <ArrowUpRight size={19} /></a>
-                <p className="contact-note">Explore my public work and connect through my GitHub profile.</p>
+                <a className="contact-button" href="mailto:davidf@audastio.com">davidf@audastio.com <ArrowUpRight size={19} /></a>
+                <p className="contact-note">Explore my public work on <a href="https://github.com/audastio-spec" target="_blank" rel="noreferrer">GitHub</a>.</p>
               </section>
               <footer><span>© {new Date().getFullYear()} David Frederick</span><span>Built with React &amp; Tailwind CSS</span><a href={`${basePath}/#home`}>Back to top ↑</a></footer>
             </>
